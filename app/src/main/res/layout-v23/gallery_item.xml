@@ -6,4 +6,5 @@
     android:layout_gravity="center"
     android:scaleType="centerCrop"
     android:onClick="openPicture"
+    android:foreground="?android:selectableItemBackground"
     android:contentDescription="@string/menu_refresh"/>

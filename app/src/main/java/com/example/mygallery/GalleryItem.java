@@ -1,37 +1,32 @@
 package com.example.mygallery;
 
-import android.view.View;
-
-public class GalleryItem {
+class GalleryItem {
     private String caption;
     private String id;
     private String url;
 
-    public String getCaption() {
+    String getCaption() {
         return caption;
     }
 
-    public void setCaption(String caption) {
+    void setCaption(String caption) {
         this.caption = caption;
     }
 
-    public String getId() {
+    String getId() {
         return id;
     }
 
-    public void setId(String id) {
+    void setId(String id) {
         this.id = id;
     }
 
-    public String getUrl() {
+    String getUrl() {
         return url;
     }
 
-    public void setUrl(String url) {
+    void setUrl(String url) {
         this.url = url;
     }
 
-    public void openPicture(View view) {
-
-    }
 }

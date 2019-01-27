@@ -15,8 +15,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class FlickFetcher {
-    private static final String TAG = "FlickFetcher";
+public class FlickerGetSizes {
+    private static final String TAG = "FlickerGetSizes";
     private static final String API_KEY = "a7442e722134253a45ed5612bfbd6ddd";
 
     public String getJsonString(String UrlSpec) throws IOException {
@@ -30,51 +30,40 @@ public class FlickFetcher {
         return result;
     }
 
-    public List<GalleryItem> fetchItems() {
-        List<GalleryItem> galleryItems = new ArrayList<>();
+    public List<PhotoItem> getSizes(String id) {
+        List<PhotoItem> PhotoItems = new ArrayList<>();
 
         try {
             String url = Uri.parse("https://api.flickr.com/services/rest/")
                     .buildUpon()
-                    .appendQueryParameter("method", "flickr.photos.getRecent")
+                    .appendQueryParameter("method", "flickr.photos.getSizes")
                     .appendQueryParameter("api_key", API_KEY)
+                    .appendQueryParameter("photo_id", id)
                     .appendQueryParameter("format", "json")
                     .appendQueryParameter("nojsoncallback", "1")
-                    .appendQueryParameter("extras", "urls_s")
                     .build().toString();
             String jsonString = getJsonString(url);
             JSONObject jsonBody = new JSONObject(jsonString);
-            parseItems(galleryItems, jsonBody);
+            parseItems(PhotoItems, jsonBody);
         } catch (JSONException e) {
             Log.e(TAG, "Ошибка парсинга JSON", e);
         } catch (IOException e) {
             Log.e(TAG, "Ошибка загрузки данных", e);
         }
 
-        return galleryItems;
+        return PhotoItems;
     }
 
-    public void parseItems(List<GalleryItem> items, JSONObject jsonBody) throws IOException, JSONException {
-        JSONObject photosJsonObject = jsonBody.getJSONObject("photos");
-        JSONArray photoJsonArray = photosJsonObject.getJSONArray("photo");
+    public void parseItems(List<PhotoItem> items, JSONObject jsonBody) throws IOException, JSONException {
+        JSONObject sizesJsonObject = jsonBody.getJSONObject("sizes");
+        JSONArray sizeJsonArray = sizesJsonObject.getJSONArray("size");
 
-        for (int i = 0; i < photoJsonArray.length(); i++) {
-            JSONObject photoJsonObject = photoJsonArray.getJSONObject(i);
-            GalleryItem item = new GalleryItem();
-            item.setId(photoJsonObject.getString("id"));
-            item.setCaption(photoJsonObject.getString("title"));
-
-            item.setUrl(
-                    "https://farm"
-                            + photoJsonObject.getString("farm")
-                            + ".staticflickr.com/"
-                            + photoJsonObject.getString("server")
-                            + "/"
-                            + photoJsonObject.getString("id")
-                            + "_"
-                            + photoJsonObject.getString("secret")
-                            + "_m"
-                            + ".jpg");
+        for (int i = 0; i < sizeJsonArray.length(); i++) {
+            JSONObject photoJsonObject = sizeJsonArray.getJSONObject(i);
+            PhotoItem item = new PhotoItem();
+            item.setWidth(photoJsonObject.getString("width"));
+            item.setHeight(photoJsonObject.getString("height"));
+            item.setUrl(photoJsonObject.getString("source"));
             items.add(item);
         }
     }
