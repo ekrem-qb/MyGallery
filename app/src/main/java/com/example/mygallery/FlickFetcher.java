@@ -40,7 +40,7 @@ public class FlickFetcher {
                     .appendQueryParameter("api_key", API_KEY)
                     .appendQueryParameter("format", "json")
                     .appendQueryParameter("nojsoncallback", "1")
-                    .appendQueryParameter("extras", "urls_s")
+                    .appendQueryParameter("extras", "url_s, url_o")
                     .build().toString();
             String jsonString = getJsonString(url);
             JSONObject jsonBody = new JSONObject(jsonString);
@@ -64,18 +64,15 @@ public class FlickFetcher {
             item.setId(photoJsonObject.getString("id"));
             item.setCaption(photoJsonObject.getString("title"));
 
-            item.setUrl(
-                    "https://farm"
-                            + photoJsonObject.getString("farm")
-                            + ".staticflickr.com/"
-                            + photoJsonObject.getString("server")
-                            + "/"
-                            + photoJsonObject.getString("id")
-                            + "_"
-                            + photoJsonObject.getString("secret")
-                            + "_m"
-                            + ".jpg");
-            items.add(item);
+            if (!photoJsonObject.has("url_s") || !photoJsonObject.has("url_o")) {
+                continue;
+            } else {
+                item.setUrl_s(photoJsonObject.getString("url_s"));
+                item.setUrl_o(photoJsonObject.getString("url_o"));
+
+                items.add(item);
+            }
+
         }
     }
 }
